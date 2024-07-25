@@ -1,0 +1,31 @@
+/* App.css */
+:root {
+  --color-text-light: #000000;
+  --color-text-dark: #ffffff;
+  --color-bg-light: #ffffff;
+  --color-bg-dark: #000000;
+  --color-navbar-light: #ffffff; /* Set the navbar color to white in light mode */
+  --color-navbar-dark: #000000;
+}
+
+.dark {
+  --color-text: var(--color-text-dark);
+  --color-bg: var(--color-bg-dark);
+  --color-navbar: var(--color-navbar-dark);
+}
+
+.light {
+  --color-text: var(--color-text-light);
+  --color-bg: var(--color-bg-light);
+  --color-navbar: var(--color-navbar-light);
+}
+
+body {
+  color: var(--color-text);
+  background-color: var(--color-bg);
+}
+
+.navbar {
+  background-color: var(--color-navbar);
+  color: var(--color-text);
+}
