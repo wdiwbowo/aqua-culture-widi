@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaTachometerAlt, FaDesktop, FaMap, FaLanguage, FaBell, FaBars, FaTimes, FaSearch, FaUser } from "react-icons/fa";
+import { FaTachometerAlt, FaDesktop, FaMap, FaLanguage, FaBell, FaBars, FaTimes, FaSearch, FaUser, FaSignOutAlt, FaCog, FaUserCircle } from "react-icons/fa";
 
 const NavbarAdmin = ({ onSidebarToggle }) => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true); // State to manage sidebar visibility
   const [searchQuery, setSearchQuery] = useState(""); // State to manage search query
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false); // State to manage dropdown visibility
 
   // Mock user data
   const user = {
@@ -26,12 +27,20 @@ const NavbarAdmin = ({ onSidebarToggle }) => {
     setSearchQuery(e.target.value);
   };
 
+  const handleUserIconClick = () => {
+    setIsDropdownOpen(prevState => !prevState);
+  };
+
+  const handleDropdownClose = () => {
+    setIsDropdownOpen(false);
+  };
+
   // Sidebar items
   const sidebarItems = [
     { title: "Default", path: "/dashboard", icon: <FaTachometerAlt /> },
     { title: "Analytics", path: "/analytics", icon: <FaDesktop /> },
     { title: "Map", path: "/dashboardPeta", icon: <FaMap /> },
-    { title: "User", path: "/userProfile", icon: <FaUser /> } // Add this item
+    { title: "User", path: "/userProfile", icon: <FaUser /> },
   ];
 
   // Filtered items based on search query
@@ -87,19 +96,33 @@ const NavbarAdmin = ({ onSidebarToggle }) => {
             <FaBell className="text-xl" />
           </div>
           {/* Card for User Profile */}
-          <div className="flex items-center bg-gray-800 p-2 rounded-lg shadow-md hover:bg-gray-700">
+          <div className="relative flex items-center bg-gray-800 p-2 rounded-lg shadow-md hover:bg-gray-700 cursor-pointer" onClick={handleUserIconClick}>
             <img src={user.photoUrl} alt="User" className="w-8 h-8 rounded-full" />
             <span className="ml-2">{user.name}</span>
+            {/* Dropdown Menu */}
+            {isDropdownOpen && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-gray-900 text-white border border-gray-700 rounded-lg shadow-lg z-40">
+                <Link to="/account-settings" className="flex items-center p-2 hover:bg-gray-700" onClick={handleDropdownClose}>
+                  <FaCog className="mr-2" /> Account Settings
+                </Link>
+                <Link to="/UserProfile" className="flex items-center p-2 hover:bg-gray-700" onClick={handleDropdownClose}>
+                  <FaUserCircle className="mr-2" /> Social Profile
+                </Link>
+                <Link to="/login" className="flex items-center p-2 hover:bg-gray-700" onClick={handleDropdownClose}>
+                  <FaSignOutAlt className="mr-2" /> Logout
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </nav>
 
       {/* Sidebar */}
-      <div className={`fixed top-16 left-0 h-full transition-all duration-300 ${isSidebarOpen ? 'w-60' : 'w-16'} bg-gray-900 text-white shadow-lg z-30`}>
+      <div className={`fixed top-16 left-0 h-[calc(100vh-4rem)] transition-all duration-300 ${isSidebarOpen ? 'w-60' : 'w-16'} bg-gray-900 text-white shadow-lg z-30 overflow-y-auto`}>
         <div className="p-5">
           {/* Dashboard Section */}
-          {isSidebarOpen && <h5 className="text-lg font-semibold mb-4 mt-6">Dashboard</h5>}
-          {isSidebarOpen ? (
+          {isSidebarOpen && dashboardItems.length > 0 && <h5 className="text-lg font-semibold mb-4 mt-6">Dashboard</h5>}
+          {isSidebarOpen && dashboardItems.length > 0 && (
             <ul>
               {dashboardItems.map((item, index) => (
                 <li key={index} className="mb-2 flex items-center">
@@ -109,22 +132,14 @@ const NavbarAdmin = ({ onSidebarToggle }) => {
                 </li>
               ))}
             </ul>
-          ) : (
-            <div className="flex flex-col items-center pt-4">
-              {dashboardItems.map((item, index) => (
-                <Link key={index} to={item.path} className="p-2 hover:bg-blue-700 rounded flex items-center">
-                  {item.icon}
-                </Link>
-              ))}
-            </div>
           )}
 
           {/* Horizontal Line */}
-          {isSidebarOpen && <hr className="my-4 border-gray-700" />}
+          {isSidebarOpen && (dashboardItems.length > 0 || mapItems.length > 0 || userItems.length > 0) && <hr className="my-4 border-gray-700" />}
 
           {/* Map Section */}
-          {isSidebarOpen && <h5 className="text-lg font-semibold mt-8 mb-4">Forms</h5>}
-          {isSidebarOpen ? (
+          {isSidebarOpen && mapItems.length > 0 && <h5 className="text-lg font-semibold mt-8 mb-4">Forms</h5>}
+          {isSidebarOpen && mapItems.length > 0 && (
             <ul>
               {mapItems.map((item, index) => (
                 <li key={index} className="mb-2 flex items-center">
@@ -134,22 +149,14 @@ const NavbarAdmin = ({ onSidebarToggle }) => {
                 </li>
               ))}
             </ul>
-          ) : (
-            <div className="flex flex-col items-center pt-4">
-              {mapItems.map((item, index) => (
-                <Link key={index} to={item.path} className="p-2 hover:bg-blue-700 rounded flex items-center">
-                  {item.icon}
-                </Link>
-              ))}
-            </div>
           )}
 
           {/* Horizontal Line to separate Map and User sections */}
-          {isSidebarOpen && <hr className="my-4 border-gray-700" />}
+          {isSidebarOpen && (mapItems.length > 0 || userItems.length > 0) && <hr className="my-4 border-gray-700" />}
 
           {/* User Section */}
-          {isSidebarOpen && <h5 className="text-lg font-semibold mt-8 mb-4">User</h5>}
-          {isSidebarOpen ? (
+          {isSidebarOpen && userItems.length > 0 && <h5 className="text-lg font-semibold mt-8 mb-4">User</h5>}
+          {isSidebarOpen && userItems.length > 0 && (
             <ul>
               {userItems.map((item, index) => (
                 <li key={index} className="mb-2 flex items-center">
@@ -159,14 +166,6 @@ const NavbarAdmin = ({ onSidebarToggle }) => {
                 </li>
               ))}
             </ul>
-          ) : (
-            <div className="flex flex-col items-center pt-4">
-              {userItems.map((item, index) => (
-                <Link key={index} to={item.path} className="p-2 hover:bg-blue-700 rounded flex items-center">
-                  {item.icon}
-                </Link>
-              ))}
-            </div>
           )}
         </div>
       </div>

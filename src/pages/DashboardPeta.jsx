@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import NavbarPeta from '../components/NavbarPeta';
+import NavbarAdmin from '../components/NavbarAdmin';
 import { FaHome } from 'react-icons/fa';
 import { MapContainer, TileLayer, Marker, Popup, Polyline, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -8,21 +8,9 @@ import 'leaflet/dist/leaflet.css';
 function DashboardPeta() {
   const [locations, setLocations] = useState([
     { position: [-7.797068, 110.370529], name: 'Tambak 1', link: '/Dashboard' },
-    {
-      position: [-7.940916087153265, 110.27526855468751],
-      name: 'Tambak 2',
-      link: '/Tambak2',
-    },
-    {
-      position: [-7.715754684123847, 110.27664184570314],
-      name: 'Tambak 3',
-      link: '/Tambak3',
-    },
-    {
-      position: [-7.828860776868768, 110.09021759033205],
-      name: 'Tambak 4',
-      link: '/Tambak4',
-    },
+    { position: [-7.940916087153265, 110.27526855468751], name: 'Tambak 2', link: '/Tambak2' },
+    { position: [-7.715754684123847, 110.27664184570314], name: 'Tambak 3', link: '/Tambak3' },
+    { position: [-7.828860776868768, 110.09021759033205], name: 'Tambak 4', link: '/Tambak4' },
   ]);
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
@@ -64,8 +52,8 @@ function DashboardPeta() {
   }
 
   return (
-    <div className={`flex h-screen bg-gray-800 ${isSidebarOpen ? 'ml-60' : 'ml-16'} transition-all duration-300`}>
-      <NavbarPeta onSidebarToggle={handleSidebarToggle} className="fixed top-0 left-0 w-full z-10" /> {/* Make navbar fixed */}
+    <div className={`flex bg-gray-800 ${isSidebarOpen ? 'ml-60' : 'ml-16'} transition-all duration-300`}>
+      <NavbarAdmin onSidebarToggle={handleSidebarToggle} className="fixed top-0 left-0 w-full z-10" /> {/* Make navbar fixed */}
       <div className="flex-1 mt-32 p-8 overflow-y-auto relative"> {/* Adjusted margin-top to match navbar height */}
         <div className="flex flex-col w-full bg-gray-800 border border-gray-700 rounded-lg shadow-lg mb-6">
           <div className="flex items-center justify-between p-4 border-b border-gray-600">
@@ -73,10 +61,7 @@ function DashboardPeta() {
               <h5 className="text-sm font-bold tracking-tight text-gray-100">MAP</h5>
             </div>
             <div className="flex-1 flex justify-center">
-              <button
-                onClick={() => setFormVisible(true)}
-                className="text-lg sm:text-xl text-blue-300"
-              >
+              <button onClick={() => setFormVisible(true)} className="text-lg sm:text-xl text-blue-300">
                 Add Location
               </button>
             </div>
@@ -85,17 +70,13 @@ function DashboardPeta() {
             </Link>
           </div>
         </div>
-        <div className="relative bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4 h-[calc(100vh-10rem)]">
+        <div className={`relative bg-gray-800 rounded-lg overflow-hidden shadow-lg p-4 h-[calc(100vh-10rem)] ${isFormVisible ? 'opacity-50' : ''}`}>
           <div className="h-full w-full">
-            <MapContainer
-              center={locations[0].position}
-              zoom={12}
-              style={{ height: '100%', width: '100%' }}
-            >
+            <MapContainer center={locations[0].position} zoom={12} style={{ height: '100%', width: '100%' }}>
               <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
               {locations.map((location, index) => (
                 <Marker key={index} position={location.position}>
-                  <Popup>
+                  <Popup closeOnClick={false} closeButton={false} autoPan={false}>
                     <div className="p-2">
                       <p className="text-lg font-semibold mb-1">{location.name}</p>
                       <Link to={location.link} className="text-blue-300 hover:underline">
@@ -105,17 +86,15 @@ function DashboardPeta() {
                   </Popup>
                 </Marker>
               ))}
-              <Polyline positions={locations.map(location => location.position)} color="red" />
-              <LocationMarker />
+              <Polyline positions={locations.map(location => location.position)} color="blue" />
+              {isFormVisible && <LocationMarker />}
             </MapContainer>
           </div>
         </div>
         {isFormVisible && (
-          <div className="fixed inset-0 bg-gray-900 bg-opacity-75 flex justify-center items-center z-50">
-            <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md pointer-events-auto relative">
-              <h5 className="mb-4 text-2xl font-bold text-gray-100 text-center">
-                Add New Location
-              </h5>
+          <div className="fixed inset-0 flex justify-center items-center z-50">
+            <div className="bg-gray-800 p-6 rounded-lg shadow-lg w-full max-w-md pointer-events-auto relative z-50">
+              <h5 className="mb-4 text-2xl font-bold text-gray-100 text-center">Add New Location</h5>
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -124,55 +103,45 @@ function DashboardPeta() {
                 className="space-y-4"
               >
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Name</label>
+                  <label className="block text-gray-300 font-medium mb-1"></label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, name: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                     className="w-full p-2 border border-gray-600 rounded-lg bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                     placeholder="Enter location name"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Latitude</label>
+                  <label className="block text-gray-300 font-medium mb-1"></label>
                   <input
                     type="number"
                     step="any"
                     name="lat"
                     value={formData.lat}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lat: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, lat: e.target.value })}
                     className="w-full p-2 border border-gray-600 rounded-lg bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                     placeholder="Enter latitude"
                     required
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-300 font-medium mb-1">Longitude</label>
+                  <label className="block text-gray-300 font-medium mb-1"></label>
                   <input
                     type="number"
                     step="any"
                     name="lng"
                     value={formData.lng}
-                    onChange={(e) =>
-                      setFormData({ ...formData, lng: e.target.value })
-                    }
+                    onChange={(e) => setFormData({ ...formData, lng: e.target.value })}
                     className="w-full p-2 border border-gray-600 rounded-lg bg-gray-700 text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400"
                     placeholder="Enter longitude"
                     required
                   />
                 </div>
-                <div className="h-48 w-full mb-4 rounded-lg overflow-hidden">
-                  <MapContainer
-                    center={[-7.797068, 110.370529]}
-                    zoom={12}
-                    style={{ height: '100%', width: '100%' }}
-                  >
+                <div className="h-64 w-full rounded-lg overflow-hidden">
+                  <MapContainer center={[formData.lat || -7.797068, formData.lng || 110.370529]} zoom={12} style={{ height: '100%', width: '100%' }}>
                     <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                     <LocationMarker />
                   </MapContainer>
