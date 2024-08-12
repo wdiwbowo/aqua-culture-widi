@@ -9,9 +9,7 @@ function DashboardPeta() {
   const [locations, setLocations] = useState([
     { position: [-7.797068, 110.370529], name: 'Tambak 1', link: '/Dashboard' },
     { position: [-7.940916087153265, 110.27526855468751], name: 'Tambak 2', link: '/Tambak2' },
-    { position: [-7.715754684123847, 110.27664184570314], name: 'Tambak 3', link: '/Tambak3' },
-    { position: [-7.828860776868768, 110.09021759033205], name: 'Tambak 4', link: '/Tambak4' },
-  ]);
+    ]);
 
   const [isSidebarOpen, setSidebarOpen] = useState(true);
   const [isFormVisible, setFormVisible] = useState(false);
